@@ -1,0 +1,18 @@
+matrixFile := Read(file);
+lines := Split(matrixFile);
+
+entries := [];
+rows := 0;
+cols := 0;
+for line in lines do
+    e := StringToIntegerSequence(line);
+    Append(~entries,<e[1],e[2],e[3]>);
+    if e[1] gt rows then rows := e[1]; end if;
+    if e[2] gt cols then cols := e[2]; end if;
+end for;
+
+M := SparseMatrix(Integers(), rows, cols, entries);
+
+print rows;
+print ElementaryDivisors(M);
+exit;

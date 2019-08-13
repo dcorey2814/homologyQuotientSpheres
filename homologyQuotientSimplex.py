@@ -1,0 +1,253 @@
+import itertools
+import os
+import argparse
+import subprocess
+from multiprocessing import Pool
+
+
+argparser = argparse.ArgumentParser();
+argparser.add_argument('group_file')
+argparser.add_argument('flags_dir')
+argparser.add_argument('output_dir')
+
+argparser.add_argument('n',type=int)
+
+args = argparser.parse_args()
+
+
+matrix_dir = os.path.join(args.output_dir,"matrices")
+if not os.path.isdir(matrix_dir):
+    os.makedirs(matrix_dir)
+
+
+with open(args.group_file,'r') as GpFile:
+    gensStr = GpFile.readlines()
+GpGens = set([tuple(map(int,g.split(" "))) for g in gensStr])
+
+
+flatten_list = lambda l: [item for sublist in l for item in sublist]
+
+sublists_n = lambda n: flatten_list([[list(s) for s in itertools.combinations(range(n),i)] for i in range(1,n)])
+
+def sublists_n_index(n):
+    sblists = sublists_n(n);
+    return {tuple(sblists[i]):i for i in range(len(sblists))}
+
+
+def lists_above(l,n):
+    to_add=list(set(range(n)).difference(l))
+    d=len(to_add)
+    if d==0:
+        return []
+    else:
+        above=[]
+        for i in range(1,d):
+            for e in itertools.combinations(to_add,i):
+                new_face=l+list(e)
+                new_face.sort()
+                above.append(new_face)
+        return above
+
+
+def lists_above_i(li,n):
+    vs = sublists_n(n)
+    vi = sublists_n_index(n)
+    l = vs[li]
+    to_add=list(set(range(n)).difference(l))
+    d=len(to_add)
+    if d==0:
+        return []
+    else:
+        above=[]
+        for i in range(1,d):
+            for e in itertools.combinations(to_add,i):
+                new_face=l+list(e)
+                new_face.sort()
+                above.append(vi[tuple(new_face)])
+        return above
+
+    
+def flags_n(n):
+    vs = sublists_n(n);
+    f = {};
+    f[0] = [[v] for v in vs];
+    for i in range(1,n-1):
+        f[i] = []
+        for flag in f[i-1]:
+            list_top = flag[-1];
+            for e in lists_above(list_top, n):
+                f[i].append(flag + [e])
+    return f
+
+
+
+def flags_n_i(n):
+    vs = sublists_n(n);
+    vi = sublists_n_index(n)
+    fi = {};
+    fi[0] = [tuple([vi[tuple(v)]]) for v in vs];
+    for j in range(1,n-1):
+        fi[j] = []
+        for flagt in fi[j-1]:
+            flag = list(flagt)
+            list_top = flag[-1];
+            for e in lists_above_i(list_top, n):
+                fi[j].append(tuple(flag + [e]))
+    return fi
+
+
+def s_on_list(s,l):
+    return sorted([s[i] for i in l])
+
+def s_on_index(s, li, ls, d):
+    # ls = sublists_n(n)
+    # d = sublists_n_index(n)
+    l = ls[li]
+    sl = s_on_list(s,l)
+    return d[tuple(sl)]
+
+def s_on_flag_i(s, f, ls, d):
+    return tuple([s_on_index(s, li, ls, d) for li in f])
+
+def G_orbits(G, fi, ls, d):
+    orbit={}
+    rep={}
+    # G a group as tuples representing permutations
+    # fi as list
+    left = set(fi.copy())
+    while len(left)>0:
+        f = left.pop()
+#        orbit[f] = set()
+        for s in G:
+            sf = s_on_flag_i(s,f,ls,d)
+#            orbit[f].add(sf)
+            rep[sf] = f
+            left.discard(sf)
+    return rep
+
+def boundary_flag(f_ind, Osrc, Otgt, rDtgt, dim, ls, d):
+    #rD = rep dictionary
+    SparseVector=[]
+    f = Osrc[f_ind]
+    for i in range(dim+1):
+        dfi = list(f).copy()
+        del dfi[i]
+        dfi = tuple(dfi)
+        dfiRep = rDtgt[dfi]
+        SparseVector.append([f_ind+1, Otgt.index(dfiRep)+1, (-1)**(i%2)])
+    return SparseVector
+
+def boundary_d(rDtgt, Osrc, Otgt, dim, ls, d ):
+    return flatten_list([boundary_flag(f_ind, Osrc, Otgt, rDtgt, dim, ls, d) for f_ind in range(len(Osrc))])
+
+
+def make_matrix_file(entries, file_name):
+    with open(file_name, "w") as fout:
+        fout.write("\n".join(["{} {} {}".format(e[0],e[1],e[2]) for e in entries]))
+
+
+def fileToFlags(flagDir,n):
+    flagDict = {}
+    for i in range(n-1):
+        with open(os.path.join(flagDir,'flags_{}_{}'.format(n,i)), 'r' ) as flags_i_file:
+            flags_i = flags_i_file.readlines()
+        flagDict[i] = [tuple(map(int, f.split(" ") ) )    for f in flags_i]
+    return flagDict
+
+
+def boundary(G, n, flagDir):
+    #fidicts = flags_n_i(n)
+    fidicts = fileToFlags(flagDir,n)
+    ls = sublists_n(n)
+    d = sublists_n_index(n)
+    orbitsDicts = {j:G_orbits(G, fidicts[j], ls, d) for j in fidicts.keys()}
+    print("dict made")
+    coords = [sorted(set(orbitsDicts[j].values())) for j in orbitsDicts.keys() ]
+    #print([len(e) for e in coords])
+#    bds = {};
+    for dim in range(1,n-1):
+        bd = boundary_d(orbitsDicts[dim-1], coords[dim], coords[dim-1], dim, ls, d )
+        make_matrix_file(bd, os.path.join(matrix_dir,"b_{}.dat".format(dim)))
+#        bds[dim] = bd
+        print("mat {} made".format(dim))
+#    return bds
+    
+
+def groupFromGenerators(n,gens):
+# Input: a positive integer "n", and a set "gens" of tuples, each tuple is a permutation of (0,1,...,n-1). 
+# Output: a list of tuples, each tuple is a permutation of (0,1,...,n-1). These are the elements of S_n generated by the generators "gens" 
+    def one_iteration(n,gens,to_act,group,exhausted):
+        if to_act == set():
+            return list(group)
+        else:
+            new=set.union(*[set([tuple([g[s[i]] for i in range(n)]) for s in to_act]) for g in gens])
+            group.update(new)
+            exhausted.update(to_act)
+            to_act = new - exhausted
+            return one_iteration(n,gens,to_act,group,exhausted)
+    return one_iteration(n,gens,gens.copy(),gens.copy(),gens.copy())
+
+
+def call_magma_file(matrixFile):
+    magmaPath = os.path.join(os.path.dirname(__file__),"homology.magma");
+    ret = subprocess.run(["magma","-b","file:=" + matrixFile, magmaPath],stdout = subprocess.PIPE,check=True)
+    if ret.returncode==0 and len(ret.stdout)!=0:
+        #print(ret.stdout)
+        return ret.stdout.decode().split('\n')
+    else:
+        raise Exception("Couldn't run magma");
+
+
+
+
+
+    
+
+Gp = groupFromGenerators(args.n, GpGens)
+
+
+boundary(Gp, args.n, args.flags_dir)
+
+print("matrices made")
+
+magma_out = [call_magma_file(os.path.join(matrix_dir,"b_{}.dat".format(i))) for i in range(1,args.n-1)]
+
+dimSpaces = {i:int(magma_out[i-1][1]) for i in range(1,args.n-1)}
+ranks = {i:int(magma_out[i-1][0]) for i in range(1,args.n-1)}
+elementaryDivisors = {}
+
+for i in range(1,args.n-1):
+    elemDivStr = ''.join(magma_out[i-1][2:])[1:-1]
+    elemDivStr = elemDivStr.replace(" ","")
+    elemDiv = list(map(int,elemDivStr.split(",")))
+    elementaryDivisors[i] = [j for j in elemDiv if j !=1]
+
+
+homology = {}
+homology[args.n-2] = [dimSpaces[args.n-2] - ranks[args.n-2], []] 
+for i in range(1, args.n-2):
+    homology[i] = [dimSpaces[i] - ranks[i] - ranks[i+1], elementaryDivisors[i+1]]
+
+for i in range(1,args.n-1):
+    print("{} {} {}".format(i, homology[i][0], homology[i][1]))
+
+
+# for i in range(1,args.n-1):
+#     print("{} {} {} {}".format(i, dimSpaces[i], ranks[i], elementaryDivisors[i]))
+
+
+
+    
+# ls = sublists_n(6)
+# d = sublists_n_index(6)
+# ff=flags_n_i(6)
+# #print(f)
+# orbitsDicts = {j:G_orbits(Gp, ff[j], ls, d) for j in ff.keys()}
+# print(orbitsDicts[4][0].keys())
+
+
+# f1 = fileToFlags(args.flags_dir,6)
+# f2 = flags_n_i(6)
+
+# print(f1[4])
+# print(f2[4])
