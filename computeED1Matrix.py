@@ -42,5 +42,5 @@ elementaryDivisors = [j for j in elemDiv if j !=1]
 
 with open(os.path.join(ed_dir, "ed_{}.txt".format(args.d)),'w') as ed_file:
     ed_file.write('\n'.join([str(dimSpace), str(rank), ' '.join([str(e) for e in elementaryDivisors])]))
-print("{} {} {}".format(dimSpace, rank, elementaryDivisors))
-print(stop - start)
+# print("{} {} {}".format(dimSpace, rank, elementaryDivisors))
+# print(stop - start)

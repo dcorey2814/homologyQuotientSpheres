@@ -4,8 +4,8 @@ import os
 import argparse
 import subprocess
 from multiprocessing import Pool
-import pickle
 from homologyFunctions import *
+# from flagsFunctions import *
 from time import time
 from functools import partial
 

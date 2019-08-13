@@ -2,8 +2,6 @@ import itertools
 import os
 import argparse
 import subprocess
-from multiprocessing import Pool
-import scipy
 from homologyFunctions import *
 from time import time
 from functools import partial
