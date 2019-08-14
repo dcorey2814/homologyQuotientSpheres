@@ -9,9 +9,12 @@ from time import time
 
 argparser = argparse.ArgumentParser();
 
-argparser.add_argument('group_file')
-argparser.add_argument('output_dir')
-argparser.add_argument('n',type=int)
+argparser.add_argument('group_file', help = 'this should be a file containing a list of generators of a subgroup of S_n. Each generator should be a space-separated list of numbers 0,1,...,n-1 indicating the element of S_n, and make a new line for each generator.')
+argparser.add_argument('output_dir', help = 'a directory to store matrices and elementary divisors information. If flags_dir is not specified, this folder will also contain the flags')
+argparser.add_argument('n',type=int, help = 'number of vertices of simplex')
+parser.add_argument('-f', dest='flags_dir', help='precomputed flags directory')
+
+argparser.add_argument(-f 'flag_dir')
 
 args = argparser.parse_args()
 
