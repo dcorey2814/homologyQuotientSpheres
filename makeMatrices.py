@@ -9,8 +9,8 @@ from homologyFunctions import *
 argparser = argparse.ArgumentParser();
 
 argparser.add_argument('group_file', help =  'a file containing a list of generators of a subgroup of S_n. Each generator should be a space-separated list of numbers 0,1,...,n-1 indicating the element of S_n, and make a new line for each generator.')
-argparser.add_argument('flags_dir')
-argparser.add_argument('output_dir', help = 'a directory to store matrices and elementary divisors information (and potentially flags).', help = 'directory containing the flag files.')
+argparser.add_argument('flags_dir', help = 'directory containing the flag files.')
+argparser.add_argument('output_dir', help = 'a directory to store matrices and elementary divisors information (and potentially flags).')
 argparser.add_argument('n',type=int, help = 'number of vertices of simplex')
 
 args = argparser.parse_args()
