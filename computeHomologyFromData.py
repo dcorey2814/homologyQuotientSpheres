@@ -4,8 +4,8 @@ import subprocess
 
 argparser = argparse.ArgumentParser();
 
-argparser.add_argument('ed_dir')
-argparser.add_argument('n',type=int)
+argparser.add_argument('ed_dir', help = 'a directory that contains the elementary divisor data. each file should be named ed_i for 1 <= i <= n-2. the file ed_i should contain the dimension of C_i, rank d_i, and the elementary divisors of d_i, only one number per line.')
+argparser.add_argument('n',type=int, help = 'number of vertices of simplex')
 
 args = argparser.parse_args()
 
@@ -34,4 +34,3 @@ for d in range(1, args.n-2):
 
 for i in range(1,args.n-1):
     print("{} {} {}".format(i, homology[i][0], homology[i][1]))
-

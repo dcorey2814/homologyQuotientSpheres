@@ -5,10 +5,10 @@ from time import time
 
 argparser = argparse.ArgumentParser();
 
-argparser.add_argument('matrix_dir')
-argparser.add_argument('ed_dir')
-argparser.add_argument('n',type=int)
-argparser.add_argument('d',type=int)
+argparser.add_argument('matrix_dir', help = 'directory containing the matrix.')
+argparser.add_argument('ed_dir', help = 'a directory to contain the elementary divisor data. this script will make  ed_d where  1 <= d <= n-2. the file ed_d will contain the dimension of C_d, rank d_d, and the elementary divisors of d_d, only one number per line.')
+argparser.add_argument('n',type=int, help = 'number of vertices of simplex')
+argparser.add_argument('d',type=int, help = 'dimension of the cells concerned')
 
 
 
