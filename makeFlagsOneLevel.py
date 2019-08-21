@@ -3,7 +3,6 @@ import os
 import argparse
 import subprocess
 from homologyFunctions import *
-from flagsFunctions import *
 from time import time
 from functools import partial
 
