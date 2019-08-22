@@ -1,18 +1,11 @@
 
 import itertools
 import os
-
-
-def multiply_sequence(start, stop):
-   if start <= stop:
-      return stop
-   else:
-      return start*multiply_sequence(start-1, stop)
+from math import factorial
 
 def binomial(n,k):
    if 0<= k <= n:
-      k = min(k, n-k)
-      return multiply_sequence(n, n-k+1)//multiply_sequence(k,1)
+      return int(factorial(n)/(factorial(n-k)*factorial(k)))
    else:
       return 0
 
