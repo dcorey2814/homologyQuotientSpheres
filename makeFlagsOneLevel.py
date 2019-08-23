@@ -3,13 +3,12 @@ import os
 import argparse
 import subprocess
 from homologyFunctions import *
-from flagsFunctions import *
 from time import time
 from functools import partial
 
 
 argparser = argparse.ArgumentParser();
-argparser.add_argument('flags_dir')
+argparser.add_argument('flags_dir', )
 argparser.add_argument('n',type=int)
 argparser.add_argument('d', type=int)
 
