@@ -5,7 +5,7 @@ import os
 
 def multiply_sequence(start, stop):
    if start <= stop:
-      return stop
+      return 1
    else:
       return start*multiply_sequence(start-1, stop)
 
