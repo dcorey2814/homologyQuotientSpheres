@@ -1,20 +1,11 @@
 
 import itertools
 import os
+from math import factorial
+import functools, operator
 
-
-def multiply_sequence(start, stop):
-   if start <= stop:
-      return stop
-   else:
-      return start*multiply_sequence(start-1, stop)
-
-def binomial(n,k):
-   if 0<= k <= n:
-      k = min(k, n-k)
-      return multiply_sequence(n, n-k+1)//multiply_sequence(k,1)
-   else:
-      return 0
+lowerfactorial = lambda n,k: functools.reduce(operator.mul, range(n-k+1, n+1)) if 0< k < n else 1
+binomial = lambda n,k : lowerfactorial( n, min(k,n-k)) // factorial(min(k,n-k))
 
 flatten_list = lambda l: [item for sublist in l for item in sublist]
 
