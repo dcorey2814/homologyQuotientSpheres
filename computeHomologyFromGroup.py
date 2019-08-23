@@ -23,8 +23,7 @@ flags_dir = args.flags_dir
 
 if flags_dir == '':
     flags_dir = os.path.join(output_dir, "flags")
-    
-subprocess.run(["python3", "makeFlags.py", flags_dir, str(args.n)])
+    subprocess.run(["python3", "makeFlags.py", flags_dir, str(args.n)])
 
 matrix_dir = os.path.join(output_dir, "matrices")
 subprocess.run(["python3", "makeMatrices.py", args.group_file, flags_dir, output_dir, str(args.n)])
