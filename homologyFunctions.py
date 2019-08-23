@@ -9,6 +9,9 @@ def binomial(n,k):
    else:
       return 0
 
+import functools, operator
+lowerfactorial = lambda n,k: functools.reduce(operator.mul, range(n-k+1, n+1)) if k < 0 else 1
+binomial = lambda n,k : lowerfactorial(min(k,n-k), k) // factorial(min(n,n-k))
 flatten_list = lambda l: [item for sublist in l for item in sublist]
 
 
