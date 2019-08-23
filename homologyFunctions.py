@@ -2,16 +2,11 @@
 import itertools
 import os
 from math import factorial
-
-def binomial(n,k):
-   if 0<= k <= n:
-      return int(factorial(n)/(factorial(n-k)*factorial(k)))
-   else:
-      return 0
-
 import functools, operator
-lowerfactorial = lambda n,k: functools.reduce(operator.mul, range(n-k+1, n+1)) if k < 0 else 1
-binomial = lambda n,k : lowerfactorial(min(k,n-k), k) // factorial(min(n,n-k))
+
+lowerfactorial = lambda n,k: functools.reduce(operator.mul, range(n-k+1, n+1)) if 0< k < n else 1
+binomial = lambda n,k : lowerfactorial( n, min(k,n-k)) // factorial(min(k,n-k))
+
 flatten_list = lambda l: [item for sublist in l for item in sublist]
 
 
