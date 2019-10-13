@@ -1,5 +1,5 @@
 # homologyQuotientSpheres
-Given a subgroup G of the symmetric group S_n compute the homology of S^(n-2) / G.  This is the code used in the paper "Moduli spaces of tropical curves are simply connected" with Daniel Allcock and Sam Payne, in preparation. 
+Given a subgroup G of the symmetric group S_n compute the homology of S^(n-2) / G.  This is the code used in the paper "Moduli spaces of tropical curves are simply connected" with Daniel Allcock and Sam Payne, https://arxiv.org/abs/1908.08171. 
 
 The group G should be stored in a file group_file. Each line of group_file should be a space separated list of the numbers 0, 1, ... n-1 representing a generator for G < S_n. For example, the file for S_4 could look like:
 

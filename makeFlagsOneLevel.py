@@ -8,7 +8,7 @@ from functools import partial
 
 
 argparser = argparse.ArgumentParser();
-argparser.add_argument('flags_dir')
+argparser.add_argument('flags_dir', )
 argparser.add_argument('n',type=int)
 argparser.add_argument('d', type=int)
 
