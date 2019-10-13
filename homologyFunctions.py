@@ -1,20 +1,10 @@
-
+from math import factorial
 import itertools
 import os
 
-
-def multiply_sequence(start, stop):
-   if start <= stop:
-      return stop
-   else:
-      return start*multiply_sequence(start-1, stop)
-
 def binomial(n,k):
-   if 0<= k <= n:
-      k = min(k, n-k)
-      return multiply_sequence(n, n-k+1)//multiply_sequence(k,1)
-   else:
-      return 0
+   return factorial(n)//(factorial(k)*factorial(n-k))
+
 
 flatten_list = lambda l: [item for sublist in l for item in sublist]
 
@@ -564,15 +554,6 @@ def groupFromGenerators(n,gens):
             return one_iteration(n,gens,to_act,group,exhausted)
     return one_iteration(n,gens,gens.copy(),gens.copy(),gens.copy())
 
-
-# def coord_dict(orbitDicts):
-#     coordDicts = {}
-#     for j in orbitsDicts.keys():
-#         coordDicts[j] = {}
-#         l = list(set.union(*orbitDicts[j].values()))
-#         for k in range(len(orbitDicts[j].values())):
-#             coordDicts[j][l[k]] = k
-#     return coordDicts
 
 
 
