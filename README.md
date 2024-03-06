@@ -3,9 +3,10 @@ Given a subgroup G of the symmetric group S_n compute the homology of S^(n-2) / 
 
 The group G should be stored in a file group_file. Each line of group_file should be a space separated list of the numbers 0, 1, ... n-1 representing a generator for G < S_n. For example, the file for S_4 could look like:
 
+```
 1 2 3 0
-
 1 0 2 3
+```
 
 To compute H_* (S^(n-2)/G, Z), run:
 
@@ -17,11 +18,8 @@ where group_file is as above, output_dir is a directory to store the data genera
 
 ```
 1 rank [elementary divisors]
-
 2 rank [elementary divisors]
-
 ...
-
 n-2 rank [elementary divisors]
 ```
 
@@ -38,17 +36,11 @@ and get
 
 ```
 1 0 []
-
 2 0 []
-
 3 0 []
-
 4 0 [4]
-
 5 0 [2]
-
 6 0 []
-
 ```
 
 as the output. The group data for the other two are stored in symTriangularPrism.gp and symK33.gp. 
